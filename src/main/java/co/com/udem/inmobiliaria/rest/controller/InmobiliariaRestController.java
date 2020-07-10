@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
 import co.com.udem.inmobiliaria.dto.RegistroDTO;
 import co.com.udem.inmobiliaria.entities.Registro;
 import co.com.udem.inmobiliaria.repositories.RegistroRepository;
@@ -44,18 +43,30 @@ public class InmobiliariaRestController {
 		}
 	}
 	
-	@GetMapping("/listarUsuarios")
+	@GetMapping("/registro/listarUsuarios")
 	public Iterable<Registro> listarUsuarios() {  //Tarea: convertir a DTO convertToDTO
 		return registroRepository.findAll();
 	}
 	
-	@GetMapping("/listarUsuarios/{id}")
-	public Registro buscarUsuario(@PathVariable Long id) {
-        return registroRepository.findById(id).get();
+	@GetMapping("/registro/listarUsuarios/{id}")
+   public Registro buscarUsuario(@PathVariable Long id) {
+       return registroRepository.findById(id).get();
+		
+//		Map<String, String> response = new HashMap<>();
+//		RegistroDTO registroDTO = new RegistroDTO();
+//	try {
+//		Registro registro = registroRepository.findById(id).get();
+//		registroDTO = convertRegistro.convertToDTO(registro);
+//	} catch (ParseException e) {
+//		response.put(Constantes.CODIGO_HTTP, "500");
+//        response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al consultar usuario");
+//	}
+//	
+//	return registroDTO;
 		
 	}
 	
-	@DeleteMapping("/eliminarUsuario/{id}")
+	@DeleteMapping("/registro/eliminarUsuario/{id}")
 	public Map<String, String> eliminarUsuario(@PathVariable Long id) {
 		Map<String, String> response = new HashMap<>();
 		try {
@@ -68,23 +79,24 @@ public class InmobiliariaRestController {
 			else
 			{
 				response.put(Constantes.CODIGO_HTTP, "404");
-			    response.put(Constantes.MENSAJE_EXITO, "El usuario a modificar no existe en la base de datos");
+			    response.put(Constantes.MENSAJE_ERROR, "El usuario a modificar no existe en la base de datos");
 			    return response;	
 			}
 			
 		} catch (Exception e) {	
 			 response.put(Constantes.CODIGO_HTTP, "500");
-	         response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al insertar");
+	         response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al eliminar el usuario");
 	         return response;
 		}
 	
 	}
 	
-	@PutMapping("/modificarUsuario/{id}")
-    public Map<String, String> updateUser(@RequestBody Registro nuevoUsuario, @PathVariable Long id) {
+	@PutMapping("/registro/modificarUsuario/{id}")
+    public Map<String, String> modificarUsuario(@RequestBody RegistroDTO nuevoUsuarioDTO, @PathVariable Long id) {
 		Map<String, String> response = new HashMap<>();
 		try {
 			if(registroRepository.findById(id).isPresent()) {
+				Registro nuevoUsuario = convertRegistro.convertToEntity(nuevoUsuarioDTO);
 			    Registro user = registroRepository.findById(id).get();
 			    user.setTipoIdentificacion(nuevoUsuario.getTipoIdentificacion());
 			    user.setNumeroIdentificacion(nuevoUsuario.getNumeroIdentificacion());
@@ -100,7 +112,7 @@ public class InmobiliariaRestController {
 			    return response;
 			}else {
 				response.put(Constantes.CODIGO_HTTP, "404");
-			    response.put(Constantes.MENSAJE_EXITO, "El usuario a modificar no existe en la base de datos");
+			    response.put(Constantes.MENSAJE_ERROR, "El usuario a modificar no existe en la base de datos");
 			    return response;
 			}
 		} catch (Exception e) {
