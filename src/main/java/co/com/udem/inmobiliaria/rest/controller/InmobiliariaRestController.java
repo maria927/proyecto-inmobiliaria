@@ -1,7 +1,9 @@
 package co.com.udem.inmobiliaria.rest.controller;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -44,27 +46,51 @@ public class InmobiliariaRestController {
 	}
 	
 	@GetMapping("/registro/listarUsuarios")
-	public Iterable<Registro> listarUsuarios() {  //Tarea: convertir a DTO convertToDTO
-		return registroRepository.findAll();
+	public Map<String, Object> listarUsuarios() {
+		Map<String, Object> response = new HashMap<>();
+		List<RegistroDTO> registro = new ArrayList<>();
+
+			try {
+				Iterable<Registro> listaUsuarios = registroRepository.findAll();
+				registro = convertRegistro.convertToDTOList(listaUsuarios);
+				response.put(Constantes.CODIGO_HTTP, "200");
+				response.put(Constantes.RESULTADO, registro);
+				return response;
+			} catch (ParseException e) {
+				response.put(Constantes.CODIGO_HTTP, "500");
+		        response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al insertar");
+		        return response;
+			}
 	}
 	
+	
 	@GetMapping("/registro/listarUsuarios/{id}")
-   public Registro buscarUsuario(@PathVariable Long id) {
-       return registroRepository.findById(id).get();
-		
-//		Map<String, String> response = new HashMap<>();
-//		RegistroDTO registroDTO = new RegistroDTO();
-//	try {
-//		Registro registro = registroRepository.findById(id).get();
-//		registroDTO = convertRegistro.convertToDTO(registro);
-//	} catch (ParseException e) {
-//		response.put(Constantes.CODIGO_HTTP, "500");
-//        response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al consultar usuario");
-//	}
-//	
-//	return registroDTO;
-		
+	public Map<String, Object> buscarUsuario(@PathVariable Long id) {
+		Map<String, Object> response = new HashMap<>();
+		RegistroDTO registroDTO = new RegistroDTO();
+
+		try {
+
+			if (registroRepository.findById(id).isPresent()) {
+				Registro usuario = registroRepository.findById(id).get();
+				registroDTO = convertRegistro.convertToDTO(usuario);
+				response.put(Constantes.CODIGO_HTTP, "200");
+				response.put(Constantes.RESULTADO, registroDTO);
+				
+			} else {
+				response.put(Constantes.CODIGO_HTTP, "404");
+				response.put(Constantes.MENSAJE_ERROR, "El usuario con id "+id+" no existe");
+			}
+
+		} catch (ParseException e) {
+			response.put(Constantes.CODIGO_HTTP, "500");
+			response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al buscar el usuario");
+			
+		}
+		return response;
 	}
+	
+	
 	
 	@DeleteMapping("/registro/eliminarUsuario/{id}")
 	public Map<String, String> eliminarUsuario(@PathVariable Long id) {
