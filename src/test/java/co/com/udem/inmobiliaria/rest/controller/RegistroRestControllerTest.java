@@ -22,7 +22,7 @@ import co.com.udem.inmobiliaria.entities.Registro;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ProyectoInmobiliariaApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class InmobiliariaRestControllerTest {
+public class RegistroRestControllerTest {
 	
     @Autowired
     private TestRestTemplate restTemplate;
@@ -34,23 +34,23 @@ public class InmobiliariaRestControllerTest {
         return "http://localhost:" + port;
     }
     
-    @Test
-    public void adicionarUsuarioTest()
-    {
-    	RegistroDTO registrolDTO= new RegistroDTO();
-    	registrolDTO.setTipoIdentificacion("CC");
-    	registrolDTO.setNumeroIdentificacion((long)1017298);
-    	registrolDTO.setNombres("Pepito");
-    	registrolDTO.setApellidos("Lopez");
-    	registrolDTO.setDireccion("Calle 45");
-    	registrolDTO.setTelefono((long) 2222222);
-    	registrolDTO.setEmail("pepito@hotmail.com");
-    	registrolDTO.setPassword("pepito123**");
-    	ResponseEntity<RegistroDTO> postResponse = restTemplate.postForEntity(getRootUrl() + "/registro/registrarUsuario", registrolDTO, RegistroDTO.class);
-        assertNotNull(postResponse);
-        assertNotNull(postResponse.getBody());
-    	
-    }
+//    @Test
+//    public void adicionarUsuarioTest()
+//    {
+//    	RegistroDTO registrolDTO= new RegistroDTO();
+//    	registrolDTO.setTipoIdentificacion("CC");
+//    	registrolDTO.setNumeroIdentificacion((long)1017298);
+//    	registrolDTO.setNombres("Pepito");
+//    	registrolDTO.setApellidos("Lopez");
+//    	registrolDTO.setDireccion("Calle 45");
+//    	registrolDTO.setTelefono((long) 2222222);
+//    	registrolDTO.setEmail("pepito@hotmail.com");
+//    	registrolDTO.setPassword("pepito123**");
+//    	ResponseEntity<RegistroDTO> postResponse = restTemplate.postForEntity(getRootUrl() + "/registro/registrarUsuario", registrolDTO, RegistroDTO.class);
+//        assertNotNull(postResponse);
+//        assertNotNull(postResponse.getBody());
+//    	
+//    }
     
     @Test
     public void testObtenerUsuario() {
@@ -68,23 +68,23 @@ public class InmobiliariaRestControllerTest {
         assertNotNull(registro);
     }
     
-    @Test
-    public void modificarUsuarioTest() {
-    	Registro registrolDTO= new Registro();
-    	int id = 1;
-    	registrolDTO = restTemplate.getForObject(getRootUrl() + "/registro/modificarUsuario/" + id, Registro.class);
-    	registrolDTO.setTipoIdentificacion("CC");
-    	registrolDTO.setNumeroIdentificacion((long)1017298);
-    	registrolDTO.setNombres("Juanito");
-    	registrolDTO.setApellidos("Lopez Perez");
-    	registrolDTO.setDireccion("Calle 12");
-    	registrolDTO.setTelefono((long) 32392829);
-    	registrolDTO.setEmail("juanito@hotmail.com");
-    	registrolDTO.setPassword("juanito321**");
-        restTemplate.put(getRootUrl() + "/registro/modificarUsuario/" + id, registrolDTO);
-        Registro updatedUsuario = restTemplate.getForObject(getRootUrl() + "/registro/modificarUsuario/" + id, Registro.class);
-        assertNotNull(updatedUsuario);
-    }
+//    @Test
+//    public void modificarUsuarioTest() {
+//    	Registro registrolDTO= new Registro();
+//    	int id = 1;
+//    	registrolDTO = restTemplate.getForObject(getRootUrl() + "/registro/modificarUsuario/" + id, Registro.class);
+//    	registrolDTO.setTipoIdentificacion("CC");
+//    	registrolDTO.setNumeroIdentificacion((long)1017298);
+//    	registrolDTO.setNombres("Juanito");
+//    	registrolDTO.setApellidos("Lopez Perez");
+//    	registrolDTO.setDireccion("Calle 12");
+//    	registrolDTO.setTelefono((long) 32392829);
+//    	registrolDTO.setEmail("juanito@hotmail.com");
+//    	registrolDTO.setPassword("juanito321**");
+//        restTemplate.put(getRootUrl() + "/registro/modificarUsuario/" + id, registrolDTO);
+//        Registro updatedUsuario = restTemplate.getForObject(getRootUrl() + "/registro/modificarUsuario/" + id, Registro.class);
+//        assertNotNull(updatedUsuario);
+//    }
 
  
 

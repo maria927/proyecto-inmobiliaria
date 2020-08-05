@@ -5,14 +5,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.WebRequest;
+
 import co.com.udem.inmobiliaria.dto.RegistroDTO;
 import co.com.udem.inmobiliaria.entities.Registro;
 import co.com.udem.inmobiliaria.repositories.RegistroRepository;
@@ -20,7 +29,7 @@ import co.com.udem.inmobiliaria.utils.Constantes;
 import co.com.udem.inmobiliaria.utils.ConvertRegistro;
 
 @RestController
-public class InmobiliariaRestController {
+public class RegistroRestController {
 	
 	@Autowired
 	private RegistroRepository registroRepository;
@@ -33,16 +42,26 @@ public class InmobiliariaRestController {
 		Map<String, String> response = new HashMap<>();
 		
 		try {
-			Registro usuario = convertRegistro.convertToEntity(registroDTO);
-			registroRepository.save(usuario);
-			response.put(Constantes.CODIGO_HTTP, "200");
-            response.put(Constantes.MENSAJE_EXITO, "Usuario registrado exitosamente");
-            return response;
+			
+			if(registroRepository.buscarDocumentoTipo(registroDTO.getNumeroIdentificacion(), registroDTO.getTipoIdentificacionDTO().getId()) == null) 
+			{
+				Registro usuario = convertRegistro.convertToEntity(registroDTO);
+				registroRepository.save(usuario);
+				response.put(Constantes.CODIGO_HTTP, "200");
+	            response.put(Constantes.MENSAJE_EXITO, "Usuario registrado exitosamente");
+	            return response;
+			} else 
+			{
+				response.put(Constantes.CODIGO_HTTP, "500");
+		        response.put(Constantes.MENSAJE_ERROR, "Ya existe un registro con la identificación "+registroDTO.getNumeroIdentificacion()+" y tipo de documento "+registroDTO.getTipoIdentificacionDTO().getId());
+		        return response;
+			}
+			
 		} catch (ParseException e) {
 			 response.put(Constantes.CODIGO_HTTP, "500");
 	         response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al insertar");
 	         return response;
-		}
+	    }
 	}
 	
 	@GetMapping("/registro/listarUsuarios")
@@ -58,7 +77,7 @@ public class InmobiliariaRestController {
 				return response;
 			} catch (ParseException e) {
 				response.put(Constantes.CODIGO_HTTP, "500");
-		        response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al insertar");
+		        response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al listar los usuarios");
 		        return response;
 			}
 	}
@@ -147,5 +166,14 @@ public class InmobiliariaRestController {
 	         return response;
     }
 }
+	
+	    @ExceptionHandler(value = {ConstraintViolationException.class})
+	    public  Map<String, String> handleConstraint(ConstraintViolationException ex, 
+	            WebRequest request ) {
+		    Map<String, String> response = new HashMap<>();
+		   	response.put(Constantes.CODIGO_HTTP, "500");
+			response.put(Constantes.MENSAJE_ERROR, "Fallo en constraint: El tipo de documento ingresado es incorrecto o no existe");
+	        return response;       
+	    }
 
 }

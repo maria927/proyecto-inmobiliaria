@@ -4,6 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Registro {
@@ -11,7 +13,6 @@ public class Registro {
 	@Id
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
 	private Long id;
-	private String tipoIdentificacion;	
 	private Long numeroIdentificacion;
 	private String nombres;
 	private String apellidos;
@@ -20,12 +21,11 @@ public class Registro {
 	private String email;
 	private String password;
 	
-	public String getTipoIdentificacion() {
-		return tipoIdentificacion;
-	}
-	public void setTipoIdentificacion(String tipoIdentificacion) {
-		this.tipoIdentificacion = tipoIdentificacion;
-	}
+	@ManyToOne
+	@JoinColumn(name = "tipo_iden", referencedColumnName = "id")
+	private TipoIdentificacion tipoIdentificacion;
+	
+
 	public Long getNumeroIdentificacion() {
 		return numeroIdentificacion;
 	}
@@ -78,12 +78,17 @@ public class Registro {
 	public Registro() {
 		super();
 	}
-	
-	public Registro(Long id,String tipoIdentificacion, Long numeroIdentificacion, String nombres, String apellidos,
-			String direccion, Long telefono, String email, String password) {
+	public TipoIdentificacion getTipoIdentificacion() {
+		return tipoIdentificacion;
+	}
+	public void setTipoIdentificacion(TipoIdentificacion tipoIdentificacion) {
+		this.tipoIdentificacion = tipoIdentificacion;
+	}
+	public Registro(Long id, Long numeroIdentificacion, String nombres, String apellidos, String direccion,
+			Long telefono, String email, String password,
+			co.com.udem.inmobiliaria.entities.TipoIdentificacion tipoIdentificacion) {
 		super();
 		this.id = id;
-		this.tipoIdentificacion = tipoIdentificacion;
 		this.numeroIdentificacion = numeroIdentificacion;
 		this.nombres = nombres;
 		this.apellidos = apellidos;
@@ -91,7 +96,10 @@ public class Registro {
 		this.telefono = telefono;
 		this.email = email;
 		this.password = password;
+		this.tipoIdentificacion = tipoIdentificacion;
 	}
+	
+
 	
 	
 	
