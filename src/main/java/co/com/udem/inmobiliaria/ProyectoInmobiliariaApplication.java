@@ -7,7 +7,9 @@ import org.springframework.context.annotation.Bean;
 
 import co.com.udem.inmobiliaria.entities.Registro;
 import co.com.udem.inmobiliaria.repositories.RegistroRepository;
+import co.com.udem.inmobiliaria.utils.ConvertPropiedad;
 import co.com.udem.inmobiliaria.utils.ConvertRegistro;
+import co.com.udem.inmobiliaria.utils.ConvertTipoIdentificacion;
 
 @SpringBootApplication
 public class ProyectoInmobiliariaApplication {
@@ -20,6 +22,16 @@ public class ProyectoInmobiliariaApplication {
 	@Bean
 	public ConvertRegistro convertRegistro() {		
 		return new ConvertRegistro();
+	}
+	
+	@Bean
+	public ConvertTipoIdentificacion convertTipoIdentificacion() {		
+		return new ConvertTipoIdentificacion();
+	}
+	
+	@Bean
+	public ConvertPropiedad convertPropiedad() {		
+		return new ConvertPropiedad();
 	}
 	
 	@Bean

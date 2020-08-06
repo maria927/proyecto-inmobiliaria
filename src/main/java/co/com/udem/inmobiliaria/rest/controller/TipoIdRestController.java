@@ -47,7 +47,7 @@ public class TipoIdRestController {
 		
 		try {
 			
-			if(!tipoIdoRepository.findById(tipoIdDTO.getId()).isPresent())
+			if(tipoIdoRepository.findByTipoDocumento(tipoIdDTO.getTipoDocumento()) == null)
 			{
 				TipoIdentificacion tipoid = convertTipoId.convertToEntity(tipoIdDTO);
 				tipoIdoRepository.save(tipoid);
@@ -57,7 +57,7 @@ public class TipoIdRestController {
 			} else 
 			{
 				response.put(Constantes.CODIGO_HTTP, "500");
-		        response.put(Constantes.MENSAJE_ERROR, "Ya existe el tipo de Id");
+		        response.put(Constantes.MENSAJE_ERROR, "Ya existe el tipo de Id "+tipoIdDTO.getTipoDocumento());
 		        return response;
 			}
 			
@@ -87,7 +87,7 @@ public class TipoIdRestController {
 	}
 	
 	
-	@GetMapping("/tipoidentificacion/listarTipoId/{id}")
+	@GetMapping("/tipoidentificacion/obtenerTipoId/{id}")
 	public Map<String, Object> buscarUsuario(@PathVariable Long id) {
 		Map<String, Object> response = new HashMap<>();
 		TipoIdentificacionDTO tipoIdDTO = new TipoIdentificacionDTO();

@@ -6,4 +6,5 @@ import co.com.udem.inmobiliaria.entities.TipoIdentificacion;
 
 public interface TipoIdentificacionRepository extends CrudRepository<TipoIdentificacion, Long> {
 
+	TipoIdentificacion findByTipoDocumento(String tipoDocumento);
 }
