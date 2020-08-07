@@ -81,7 +81,7 @@ public class RegistroRestController {
 		
 		try {
 			
-			if(registroRepository.buscarDocumentoTipo(registroDTO.getNumeroIdentificacion(), registroDTO.getTipoIdentificacionDTO().getId()) == null) 
+			if(registroRepository.buscarDocumentoTipo(registroDTO.getNumeroIdentificacion(), registroDTO.getTipoIdentificacion().getId()) == null) 
 			{
 				Registro usuario = convertRegistro.convertToEntity(registroDTO);
 				registroRepository.save(Registro.builder()
@@ -103,7 +103,7 @@ public class RegistroRestController {
 			} else 
 			{
 				response.put(Constantes.CODIGO_HTTP, "500");
-		        response.put(Constantes.MENSAJE_ERROR, "Ya existe un registro con la identificación "+registroDTO.getNumeroIdentificacion()+" y tipo de documento "+registroDTO.getTipoIdentificacionDTO().getId());
+		        response.put(Constantes.MENSAJE_ERROR, "Ya existe un registro con la identificación "+registroDTO.getNumeroIdentificacion()+" y tipo de documento "+registroDTO.getTipoIdentificacion().getId());
 		        return response;
 			}
 			
@@ -113,53 +113,6 @@ public class RegistroRestController {
 	         return response;
 	    }
 	}
-	
-	@GetMapping("/registro/listarUsuarios")
-	public Map<String, Object> listarUsuarios() {
-		Map<String, Object> response = new HashMap<>();
-		List<RegistroDTO> registro = new ArrayList<>();
-
-			try {
-				Iterable<Registro> listaUsuarios = registroRepository.findAll();
-				registro = convertRegistro.convertToDTOList(listaUsuarios);
-				response.put(Constantes.CODIGO_HTTP, "200");
-				response.put(Constantes.RESULTADO, registro);
-				return response;
-			} catch (ParseException e) {
-				response.put(Constantes.CODIGO_HTTP, "500");
-		        response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al listar los usuarios");
-		        return response;
-			}
-	}
-	
-	
-	@GetMapping("/registro/listarUsuarios/{id}")
-	public Map<String, Object> buscarUsuario(@PathVariable Long id) {
-		Map<String, Object> response = new HashMap<>();
-		RegistroDTO registroDTO = new RegistroDTO();
-
-		try {
-
-			if (registroRepository.findById(id).isPresent()) {
-				Registro usuario = registroRepository.findById(id).get();
-				registroDTO = convertRegistro.convertToDTO(usuario);
-				response.put(Constantes.CODIGO_HTTP, "200");
-				response.put(Constantes.RESULTADO, registroDTO);
-				
-			} else {
-				response.put(Constantes.CODIGO_HTTP, "404");
-				response.put(Constantes.MENSAJE_ERROR, "El usuario con id "+id+" no existe");
-			}
-
-		} catch (ParseException e) {
-			response.put(Constantes.CODIGO_HTTP, "500");
-			response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al buscar el usuario");
-			
-		}
-		return response;
-	}
-	
-	
 	
 	@DeleteMapping("/registro/eliminarUsuario/{id}")
 	public Map<String, String> eliminarUsuario(@PathVariable Long id) {
@@ -217,30 +170,82 @@ public class RegistroRestController {
     }
 }
 	
-	@GetMapping("/ejemplo")
-	public List<RegistroDTO> obtenerClubesFutbol() {
-		Iterable<Registro> iClubesFutbol = registroRepository.findAll();
-		List<Registro> listaClubesFutbol = new ArrayList<Registro>();
-		List<RegistroDTO> listaClubesFutbolDTO = new ArrayList<RegistroDTO>();
-		iClubesFutbol.iterator().forEachRemaining(listaClubesFutbol::add);
-		for (int i = 0; i < listaClubesFutbol.size(); i++) {
+	@GetMapping("/registro/listarUsuarios")
+	public Map<String, Object> listarUsuarios() {
+		Map<String, Object> response = new HashMap<>();
+		Iterable<Registro> iRegistro = registroRepository.findAll();
+		List<Registro> listaRegistro = new ArrayList<Registro>();
+		List<RegistroDTO> listaRegistroDTO = new ArrayList<RegistroDTO>();
+		iRegistro.iterator().forEachRemaining(listaRegistro::add);
+		for (int i = 0; i < listaRegistro.size(); i++) {
 			try {
-				TipoIdentificacionDTO directorTecnicoDTO = null;
-				if (listaClubesFutbol.get(i).getTipoIdentificacion() != null) {
-					directorTecnicoDTO = convertTipo
-							.convertToDTO(listaClubesFutbol.get(i).getTipoIdentificacion());
+				TipoIdentificacionDTO tipoIdentificacion = null;
+				if (listaRegistro.get(i).getTipoIdentificacion() != null) {
+					tipoIdentificacion = convertTipo
+							.convertToDTO(listaRegistro.get(i).getTipoIdentificacion());
 				}
-				RegistroDTO clubFutbolDTO = convertRegistro.convertToDTO(listaClubesFutbol.get(i));
-				clubFutbolDTO.setTipoIdentificacionDTO(directorTecnicoDTO);
-				listaClubesFutbolDTO.add(clubFutbolDTO);
+				RegistroDTO registroDTO = convertRegistro.convertToDTO(listaRegistro.get(i));
+				registroDTO.setTipoIdentificacion(tipoIdentificacion);
+				listaRegistroDTO.add(registroDTO);
+				response.put(Constantes.CODIGO_HTTP, "200");
+				response.put(Constantes.RESULTADO, listaRegistroDTO);
 			} catch (ParseException e) {
-				e.printStackTrace();
+				response.put(Constantes.CODIGO_HTTP, "500");
+		        response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al listar los usuarios");
+		        
 			}
 		}
 
-		return listaClubesFutbolDTO;
+		return response;
 	}
 	
+	@GetMapping("/registro/listarUsuario/{id}")
+	public Map<String, Object> buscarUsuario(@PathVariable Long id) {
+		Map<String, Object> response = new HashMap<>();
+		RegistroDTO registroDTO = new RegistroDTO();
+		try {
+
+			if (registroRepository.findById(id).isPresent()) {
+				Registro iRegistro = registroRepository.findById(id).get();
+				TipoIdentificacionDTO tipoIdentificacion = convertTipo.convertToDTO(iRegistro.getTipoIdentificacion());
+				registroDTO = convertRegistro.convertToDTO(iRegistro);
+				registroDTO.setTipoIdentificacion(tipoIdentificacion);
+				response.put(Constantes.CODIGO_HTTP, "200");
+				response.put(Constantes.RESULTADO, registroDTO);
+				
+			} else {
+				response.put(Constantes.CODIGO_HTTP, "404");
+				response.put(Constantes.MENSAJE_ERROR, "El usuario con id "+id+" no existe");
+			}
+
+		} catch (ParseException e) {
+			response.put(Constantes.CODIGO_HTTP, "500");
+			response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al buscar el usuario");
+			
+		}
+		return response;
+	}
+	
+	
+//	@GetMapping("/registro/listarUsuarios/eejj")
+//	public Map<String, Object> listarUsuariosejj() {
+//		Map<String, Object> response = new HashMap<>();
+//		List<RegistroDTO> registro = new ArrayList<>();
+//
+//			try {
+//				Iterable<Registro> listaUsuarios = registroRepository.findAll();
+//				registro = convertRegistro.convertToDTOList(listaUsuarios);
+//				response.put(Constantes.CODIGO_HTTP, "200");
+//				response.put(Constantes.RESULTADO, registro);
+//				return response;
+//			} catch (ParseException e) {
+//				response.put(Constantes.CODIGO_HTTP, "500");
+//		        response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al listar los usuarios");
+//		        return response;
+//			}
+//	}
+	
+
 	    @ExceptionHandler(value = {ConstraintViolationException.class})
 	    public  Map<String, String> handleConstraint(ConstraintViolationException ex, 
 	            WebRequest request ) {

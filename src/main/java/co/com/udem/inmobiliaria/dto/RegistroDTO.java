@@ -14,7 +14,7 @@ public class RegistroDTO {
 	private String password;
 	private String username;
 	@Autowired
-	private TipoIdentificacionDTO tipoIdentificacionDTO;
+	private TipoIdentificacionDTO tipoIdentificacion;
 
 	
 	public Long getNumeroIdentificacion() {
@@ -69,11 +69,11 @@ public class RegistroDTO {
 	public RegistroDTO() {
 		super();
 	}
-	public TipoIdentificacionDTO getTipoIdentificacionDTO() {
-		return tipoIdentificacionDTO;
+	public TipoIdentificacionDTO getTipoIdentificacion() {
+		return tipoIdentificacion;
 	}
-	public void setTipoIdentificacionDTO(TipoIdentificacionDTO tipoIdentificacionDTO) {
-		this.tipoIdentificacionDTO = tipoIdentificacionDTO;
+	public void setTipoIdentificacion(TipoIdentificacionDTO tipoIdentificacion) {
+		this.tipoIdentificacion = tipoIdentificacion;
 	}
 
 	public String getUsername() {
@@ -84,7 +84,7 @@ public class RegistroDTO {
 	}
 	public RegistroDTO(Long id, Long numeroIdentificacion, String nombres, String apellidos, String direccion,
 			Long telefono, String email, String password, String username,
-			TipoIdentificacionDTO tipoIdentificacionDTO) {
+			TipoIdentificacionDTO tipoIdentificacion) {
 		super();
 		this.id = id;
 		this.numeroIdentificacion = numeroIdentificacion;
@@ -95,7 +95,7 @@ public class RegistroDTO {
 		this.email = email;
 		this.password = password;
 		this.username = username;
-		this.tipoIdentificacionDTO = tipoIdentificacionDTO;
+		this.tipoIdentificacion = tipoIdentificacion;
 	}
 	
 	
