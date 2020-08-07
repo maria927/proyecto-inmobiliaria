@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.com.udem.inmobiliaria.dto.AuthenticationRequest;
-import co.com.udem.inmobiliaria.repositories.UserRepository;
+import co.com.udem.inmobiliaria.repositories.RegistroRepository;
 import co.com.udem.inmobiliaria.security.jwt.JwtTokenProvider;
 import net.minidev.json.JSONObject;
 import static org.springframework.http.ResponseEntity.ok;
@@ -30,7 +30,7 @@ public class AuthenticationController {
     JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    UserRepository users;
+    RegistroRepository users;
 
     @PostMapping(path = "/signin", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> signin(@RequestBody AuthenticationRequest data) {

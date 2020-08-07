@@ -25,10 +25,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
 import co.com.udem.inmobiliaria.dto.RegistroDTO;
+import co.com.udem.inmobiliaria.dto.TipoIdentificacionDTO;
 import co.com.udem.inmobiliaria.entities.Registro;
 import co.com.udem.inmobiliaria.repositories.RegistroRepository;
 import co.com.udem.inmobiliaria.utils.Constantes;
 import co.com.udem.inmobiliaria.utils.ConvertRegistro;
+import co.com.udem.inmobiliaria.utils.ConvertTipoIdentificacion;
 
 @RestController
 public class RegistroRestController {
@@ -38,6 +40,10 @@ public class RegistroRestController {
 	
 	@Autowired
 	private ConvertRegistro convertRegistro;
+	
+	@Autowired
+	private ConvertTipoIdentificacion convertTipo;
+	
 	
 	@Autowired
 	PasswordEncoder passwordEncoder;
@@ -68,7 +74,7 @@ public class RegistroRestController {
 //	         return response;
 //	    }
 //	}
-	
+//	
 	@PostMapping("/registro/registrarUsuario")
 	public Map<String, String> adicionarUsuario(@RequestBody RegistroDTO registroDTO) {
 		Map<String, String> response = new HashMap<>();
@@ -79,8 +85,8 @@ public class RegistroRestController {
 			{
 				Registro usuario = convertRegistro.convertToEntity(registroDTO);
 				registroRepository.save(Registro.builder()
-						.username(usuario.getUsername())
-						.password(this.passwordEncoder.encode(usuario.getPassword()))
+						.username(registroDTO.getUsername())
+						.password(this.passwordEncoder.encode(registroDTO.getPassword()))
 						.numeroIdentificacion(usuario.getNumeroIdentificacion())
 						.nombres(usuario.getNombres())
 						.apellidos(usuario.getApellidos())
@@ -210,6 +216,30 @@ public class RegistroRestController {
 	         return response;
     }
 }
+	
+	@GetMapping("/ejemplo")
+	public List<RegistroDTO> obtenerClubesFutbol() {
+		Iterable<Registro> iClubesFutbol = registroRepository.findAll();
+		List<Registro> listaClubesFutbol = new ArrayList<Registro>();
+		List<RegistroDTO> listaClubesFutbolDTO = new ArrayList<RegistroDTO>();
+		iClubesFutbol.iterator().forEachRemaining(listaClubesFutbol::add);
+		for (int i = 0; i < listaClubesFutbol.size(); i++) {
+			try {
+				TipoIdentificacionDTO directorTecnicoDTO = null;
+				if (listaClubesFutbol.get(i).getTipoIdentificacion() != null) {
+					directorTecnicoDTO = convertTipo
+							.convertToDTO(listaClubesFutbol.get(i).getTipoIdentificacion());
+				}
+				RegistroDTO clubFutbolDTO = convertRegistro.convertToDTO(listaClubesFutbol.get(i));
+				clubFutbolDTO.setTipoIdentificacionDTO(directorTecnicoDTO);
+				listaClubesFutbolDTO.add(clubFutbolDTO);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return listaClubesFutbolDTO;
+	}
 	
 	    @ExceptionHandler(value = {ConstraintViolationException.class})
 	    public  Map<String, String> handleConstraint(ConstraintViolationException ex, 

@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import co.com.udem.inmobiliaria.entities.Registro;
-import co.com.udem.inmobiliaria.entities.User;
 
 
 public interface RegistroRepository extends CrudRepository<Registro, Long> {

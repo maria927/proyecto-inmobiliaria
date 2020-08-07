@@ -5,14 +5,15 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-import co.com.udem.inmobiliaria.repositories.UserRepository;
+import co.com.udem.inmobiliaria.repositories.RegistroRepository;
+
 
 @Component
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private UserRepository users;
+    private RegistroRepository users;
 
-    public CustomUserDetailsService(UserRepository users) {
+    public CustomUserDetailsService(RegistroRepository users) {
         this.users = users;
     }
 
