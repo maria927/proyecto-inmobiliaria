@@ -17,7 +17,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.HttpClientErrorException;
 import co.com.udem.inmobiliaria.ProyectoInmobiliariaApplication;
 import co.com.udem.inmobiliaria.dto.RegistroDTO;
-import co.com.udem.inmobiliaria.entities.Registro;
 
 
 @RunWith(SpringRunner.class)

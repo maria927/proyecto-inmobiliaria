@@ -2,6 +2,7 @@ package co.com.udem.inmobiliaria.rest.controller;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +39,36 @@ public class RegistroRestController {
 	@Autowired
 	private ConvertRegistro convertRegistro;
 	
+	@Autowired
+	PasswordEncoder passwordEncoder;
+	
+//	@PostMapping("/registro/registrarUsuario")
+//	public Map<String, String> adicionarUsuario(@RequestBody RegistroDTO registroDTO) {
+//		Map<String, String> response = new HashMap<>();
+//		
+//		try {
+//			
+//			if(registroRepository.buscarDocumentoTipo(registroDTO.getNumeroIdentificacion(), registroDTO.getTipoIdentificacionDTO().getId()) == null) 
+//			{
+//				Registro usuario = convertRegistro.convertToEntity(registroDTO);
+//				registroRepository.save(usuario);
+//				response.put(Constantes.CODIGO_HTTP, "200");
+//	            response.put(Constantes.MENSAJE_EXITO, "Usuario registrado exitosamente");
+//	            return response;
+//			} else 
+//			{
+//				response.put(Constantes.CODIGO_HTTP, "500");
+//		        response.put(Constantes.MENSAJE_ERROR, "Ya existe un registro con la identificación "+registroDTO.getNumeroIdentificacion()+" y tipo de documento "+registroDTO.getTipoIdentificacionDTO().getId());
+//		        return response;
+//			}
+//			
+//		} catch (ParseException e) {
+//			 response.put(Constantes.CODIGO_HTTP, "500");
+//	         response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al insertar");
+//	         return response;
+//	    }
+//	}
+	
 	@PostMapping("/registro/registrarUsuario")
 	public Map<String, String> adicionarUsuario(@RequestBody RegistroDTO registroDTO) {
 		Map<String, String> response = new HashMap<>();
@@ -46,7 +78,19 @@ public class RegistroRestController {
 			if(registroRepository.buscarDocumentoTipo(registroDTO.getNumeroIdentificacion(), registroDTO.getTipoIdentificacionDTO().getId()) == null) 
 			{
 				Registro usuario = convertRegistro.convertToEntity(registroDTO);
-				registroRepository.save(usuario);
+				registroRepository.save(Registro.builder()
+						.username(usuario.getUsername())
+						.password(this.passwordEncoder.encode(usuario.getPassword()))
+						.numeroIdentificacion(usuario.getNumeroIdentificacion())
+						.nombres(usuario.getNombres())
+						.apellidos(usuario.getApellidos())
+						.direccion(usuario.getDireccion())
+						.telefono(usuario.getTelefono())
+						.email(usuario.getEmail())
+						.tipoIdentificacion(usuario.getTipoIdentificacion())
+						.roles(Arrays.asList("ROLE_USER"))
+						.build());
+
 				response.put(Constantes.CODIGO_HTTP, "200");
 	            response.put(Constantes.MENSAJE_EXITO, "Usuario registrado exitosamente");
 	            return response;
@@ -150,7 +194,7 @@ public class RegistroRestController {
 			    user.setDireccion(nuevoUsuario.getDireccion());
 			    user.setTelefono(nuevoUsuario.getTelefono());
 			    user.setEmail(nuevoUsuario.getEmail());
-			    user.setPassword(nuevoUsuario.getPassword());
+			    user.setPassword(this.passwordEncoder.encode(nuevoUsuario.getPassword()));
 			    registroRepository.save(user);
 				response.put(Constantes.CODIGO_HTTP, "200");
 			    response.put(Constantes.MENSAJE_EXITO, "Usuario modificado exitosamente");

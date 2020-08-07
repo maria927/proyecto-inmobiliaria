@@ -24,7 +24,6 @@ import org.springframework.web.context.request.WebRequest;
 
 import co.com.udem.inmobiliaria.dto.RegistroDTO;
 import co.com.udem.inmobiliaria.dto.TipoIdentificacionDTO;
-import co.com.udem.inmobiliaria.entities.Registro;
 import co.com.udem.inmobiliaria.entities.TipoIdentificacion;
 import co.com.udem.inmobiliaria.repositories.RegistroRepository;
 import co.com.udem.inmobiliaria.repositories.TipoIdentificacionRepository;

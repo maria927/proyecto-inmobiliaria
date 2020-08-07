@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import co.com.udem.inmobiliaria.entities.Propiedad;
-import co.com.udem.inmobiliaria.entities.Registro;
 
 
 public interface PropiedadRepository extends CrudRepository<Propiedad, Long> {
