@@ -34,13 +34,13 @@ public class Registro implements UserDetails{
 	@Id
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
 	private Long id;
-	private Long numeroIdentificacion;
+	private String numeroIdentificacion;
 	private String nombres;
 	private String apellidos;
 	private String direccion;
 	private Long telefono;
 	private String email;
-	private String username;
+	//private String username;
 	private String password;
 		
 	@ManyToOne
@@ -51,10 +51,10 @@ public class Registro implements UserDetails{
 	@Builder.Default
 	private List<String> roles = new ArrayList<>();
 	
-	public Long getNumeroIdentificacion() {
+	public String getNumeroIdentificacion() {
 		return numeroIdentificacion;
 	}
-	public void setNumeroIdentificacion(Long numeroIdentificacion) {
+	public void setNumeroIdentificacion(String numeroIdentificacion) {
 		this.numeroIdentificacion = numeroIdentificacion;
 	}
 	public String getNombres() {
@@ -99,6 +99,10 @@ public class Registro implements UserDetails{
 	public void setTipoIdentificacion(TipoIdentificacion tipoIdentificacion) {
 		this.tipoIdentificacion = tipoIdentificacion;
 	}
+	
+	public void setUsername(String numeroIdentificacion) {
+		this.numeroIdentificacion = numeroIdentificacion;
+	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -115,7 +119,7 @@ public class Registro implements UserDetails{
 	@Override
 	public String getUsername() {
 
-		return this.username;
+		return this.numeroIdentificacion;
 	}
 
 	@Override
@@ -141,8 +145,5 @@ public class Registro implements UserDetails{
 
 		return true;
 	}
-	
-	
-	
 
 }

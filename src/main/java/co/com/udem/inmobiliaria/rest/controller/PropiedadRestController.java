@@ -164,6 +164,24 @@ public class PropiedadRestController {
     }
 }
 	
+	@GetMapping("/propiedad/area")
+	public Map<String, Object> filtroPorArea(@RequestBody PropiedadDTO propiedadDTO) {
+		Map<String, Object> response = new HashMap<>();
+
+			try {
+				Propiedad propiedad = convertPropiedad.convertToEntity(propiedadDTO);
+				List<Propiedad> listaPropiedad = propiedadRepository.findByArea(propiedadDTO.getArea());
+				response.put(Constantes.CODIGO_HTTP, "200");
+				response.put(Constantes.RESULTADO, listaPropiedad);
+				return response;
+			} catch (ParseException e) {
+				response.put(Constantes.CODIGO_HTTP, "500");
+		        response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al listar las propiedades");
+		        return response;
+			}
+	}
+	
+	
 	    @ExceptionHandler(value = {ConstraintViolationException.class})
 	    public  Map<String, String> handleConstraint(ConstraintViolationException ex, 
 	            WebRequest request ) {

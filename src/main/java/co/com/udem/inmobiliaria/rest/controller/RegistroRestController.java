@@ -48,33 +48,6 @@ public class RegistroRestController {
 	@Autowired
 	PasswordEncoder passwordEncoder;
 	
-//	@PostMapping("/registro/registrarUsuario")
-//	public Map<String, String> adicionarUsuario(@RequestBody RegistroDTO registroDTO) {
-//		Map<String, String> response = new HashMap<>();
-//		
-//		try {
-//			
-//			if(registroRepository.buscarDocumentoTipo(registroDTO.getNumeroIdentificacion(), registroDTO.getTipoIdentificacionDTO().getId()) == null) 
-//			{
-//				Registro usuario = convertRegistro.convertToEntity(registroDTO);
-//				registroRepository.save(usuario);
-//				response.put(Constantes.CODIGO_HTTP, "200");
-//	            response.put(Constantes.MENSAJE_EXITO, "Usuario registrado exitosamente");
-//	            return response;
-//			} else 
-//			{
-//				response.put(Constantes.CODIGO_HTTP, "500");
-//		        response.put(Constantes.MENSAJE_ERROR, "Ya existe un registro con la identificación "+registroDTO.getNumeroIdentificacion()+" y tipo de documento "+registroDTO.getTipoIdentificacionDTO().getId());
-//		        return response;
-//			}
-//			
-//		} catch (ParseException e) {
-//			 response.put(Constantes.CODIGO_HTTP, "500");
-//	         response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al insertar");
-//	         return response;
-//	    }
-//	}
-//	
 	@PostMapping("/registro/registrarUsuario")
 	public Map<String, String> adicionarUsuario(@RequestBody RegistroDTO registroDTO) {
 		Map<String, String> response = new HashMap<>();
@@ -85,7 +58,7 @@ public class RegistroRestController {
 			{
 				Registro usuario = convertRegistro.convertToEntity(registroDTO);
 				registroRepository.save(Registro.builder()
-						.username(registroDTO.getUsername())
+						//.username(registroDTO.getUsername())
 						.password(this.passwordEncoder.encode(registroDTO.getPassword()))
 						.numeroIdentificacion(usuario.getNumeroIdentificacion())
 						.nombres(usuario.getNombres())
@@ -226,24 +199,6 @@ public class RegistroRestController {
 		return response;
 	}
 	
-	
-//	@GetMapping("/registro/listarUsuarios/eejj")
-//	public Map<String, Object> listarUsuariosejj() {
-//		Map<String, Object> response = new HashMap<>();
-//		List<RegistroDTO> registro = new ArrayList<>();
-//
-//			try {
-//				Iterable<Registro> listaUsuarios = registroRepository.findAll();
-//				registro = convertRegistro.convertToDTOList(listaUsuarios);
-//				response.put(Constantes.CODIGO_HTTP, "200");
-//				response.put(Constantes.RESULTADO, registro);
-//				return response;
-//			} catch (ParseException e) {
-//				response.put(Constantes.CODIGO_HTTP, "500");
-//		        response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al listar los usuarios");
-//		        return response;
-//			}
-//	}
 	
 
 	    @ExceptionHandler(value = {ConstraintViolationException.class})

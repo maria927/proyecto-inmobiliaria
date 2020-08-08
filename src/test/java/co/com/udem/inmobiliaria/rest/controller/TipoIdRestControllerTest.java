@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import java.text.ParseException;
 
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,11 +37,11 @@ import co.com.udem.inmobiliaria.utils.ConvertTipoIdentificacion;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ProyectoInmobiliariaApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class RegistroRestControllerTest {
+public class TipoIdRestControllerTest {
 	
     @Autowired
     private TestRestTemplate restTemplate;
-    
+        
     @Autowired
     private TipoIdentificacionRepository tipoIdenRepo;
     
@@ -61,8 +62,8 @@ public class RegistroRestControllerTest {
     @Before
 	public void authorization() {
     	adicionarUsuarioTest();
-		autenticationRequestDTO.setUsername("1017298");
-		autenticationRequestDTO.setPassword("juanito123*");
+		autenticationRequestDTO.setUsername("123456");
+		autenticationRequestDTO.setPassword("john123*");
 		ResponseEntity<String> postResponse = restTemplate.postForEntity(getRootUrl() + "/auth/signin",
 				autenticationRequestDTO, String.class);
 		Gson g = new Gson();
@@ -71,19 +72,93 @@ public class RegistroRestControllerTest {
 		token = autenticationResponseDTO.getToken();
 	}
       
+    @Test
+    public void AdicionarTipoIdTest()
+    {
+
+    	TipoIdentificacionDTO tipoIdentificacionDTO = new TipoIdentificacionDTO();
+    	tipoIdentificacionDTO.setId(2L);
+    	tipoIdentificacionDTO.setTipoDocumento("CE");
+    	HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.set("Authorization", "Bearer " + this.token);
+
+		HttpEntity<TipoIdentificacionDTO> entity = new HttpEntity<TipoIdentificacionDTO>(tipoIdentificacionDTO, headers);
+		ResponseEntity<String> postResponse = restTemplate.exchange(
+				getRootUrl() + "/tipoidentificacion/registrarTipoId", HttpMethod.POST, entity, String.class);
+		System.err.println("adicionar tipo id: " + postResponse);
+		assertEquals(200, postResponse.getStatusCode().value());
+    	
+    }
+
     
     @Test
+    public void buscarTipoIdTest() {
+    	HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Bearer " + this.token);
+    	HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+		ResponseEntity<String> postResponse = restTemplate.exchange(getRootUrl() + "/tipoidentificacion/obtenerTipoId/1", HttpMethod.GET,
+				entity, String.class);
+		System.err.println("buscar tipo id: " + postResponse);
+		assertEquals(200, postResponse.getStatusCode().value());
+    }
+    
+    
+    @Test
+    public void obtenerTipoId() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Bearer " + this.token);
+        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+        ResponseEntity<String> response = restTemplate.exchange(getRootUrl() + "/tipoidentificacion/obtenerTipoId", HttpMethod.GET, entity,
+                String.class);
+        assertNotNull(response.getBody());
+        System.err.println("Obtener todo "+response);
+        assertEquals(200, response.getStatusCode().value());
+    }
+    
+    @Test
+    public void modificarTipoIdTest() {
+    	int id = 1;
+    	TipoIdentificacionDTO tipoIdentificacionDTO = new TipoIdentificacionDTO();
+    	tipoIdentificacionDTO.setId(1L);
+    	tipoIdentificacionDTO.setTipoDocumento("PA");
+    	HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.set("Authorization", "Bearer " + this.token);
+		HttpEntity<TipoIdentificacionDTO> entity = new HttpEntity<TipoIdentificacionDTO>(tipoIdentificacionDTO, headers);
+		ResponseEntity<String> response = restTemplate.exchange(getRootUrl() + "/tipoidentificacion/modificarTipoId/" + id, HttpMethod.PUT,
+				entity, String.class);	
+		System.err.println("modificar tipo id: " + response);
+		assertEquals(200, response.getStatusCode().value());
+    }
+
+    @Test
+    public void eliminarUsuarioTest() {
+         int id = 2;
+	     HttpHeaders headers = new HttpHeaders();
+	 	 headers.setContentType(MediaType.APPLICATION_JSON);
+	 	 headers.set("Authorization", "Bearer " + this.token);
+	 	 HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+		 ResponseEntity<String> postResponse = restTemplate.exchange(getRootUrl() + "/tipoidentificacion/eliminarTipoId/" + id, HttpMethod.DELETE,
+				entity, String.class);
+		 System.err.println("eliminar tipo id: " + postResponse);
+		 assertEquals(200, postResponse.getStatusCode().value());
+    }
+    
+
     public void adicionarUsuarioTest()
     {
     	RegistroDTO registrolDTO= new RegistroDTO();
-    	adicionarTipoIdTest();
-    	registrolDTO.setNumeroIdentificacion("1017298");
-    	registrolDTO.setNombres("Juanito");
-    	registrolDTO.setApellidos("Velez");
-    	registrolDTO.setDireccion("Calle 45");
+    	adicionarTipoIdInicial();
+    	registrolDTO.setNumeroIdentificacion("123456");
+    	registrolDTO.setNombres("John");
+    	registrolDTO.setApellidos("Doe");
+    	registrolDTO.setDireccion("Calle 24");
     	registrolDTO.setTelefono((long) 2222222);
-    	registrolDTO.setEmail("juanito@hotmail.com");
-    	registrolDTO.setPassword("juanito123*");
+    	registrolDTO.setEmail("john@hotmail.com");
+    	registrolDTO.setPassword("john123*");
     	TipoIdentificacionDTO tipoIdentificacionDTO = new TipoIdentificacionDTO();
     	tipoIdentificacionDTO.setId(1L);
     	registrolDTO.setTipoIdentificacion(tipoIdentificacionDTO);
@@ -94,68 +169,7 @@ public class RegistroRestControllerTest {
     	
     }
     
-    @Test
-    public void testObtenerUsuarios() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Bearer " + this.token);
-        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
-        ResponseEntity<String> response = restTemplate.exchange(getRootUrl() + "/registro/listarUsuarios", HttpMethod.GET, entity,
-                String.class);
-        assertNotNull(response.getBody());
-        System.out.println("testObtenerUsuarios: " + response);
-        assertEquals(200, response.getStatusCode().value());
-    }
-    
-    @Test
-    public void buscarUsuarioTest() {
-    	HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Bearer " + this.token);
-    	HttpEntity<String> entity = new HttpEntity<String>(null, headers);
-		ResponseEntity<String> postResponse = restTemplate.exchange(getRootUrl() + "/registro/listarUsuario/1", HttpMethod.GET,
-				entity, String.class);
-		System.out.println("buscarUsuarioTest: " + postResponse);
-		assertEquals(200, postResponse.getStatusCode().value());
-    }
-    
-    @Test
-    public void modificarUsuarioTest() {
-    	RegistroDTO registrolDTO= new RegistroDTO();
-    	int id = 1;
-    	registrolDTO.setNumeroIdentificacion("1017298");
-    	registrolDTO.setNombres("Juanito");
-    	registrolDTO.setApellidos("Lopez Perez");
-    	registrolDTO.setDireccion("Calle 12");
-    	registrolDTO.setTelefono((long) 32392829);
-    	registrolDTO.setEmail("juanito@hotmail.com");
-    	registrolDTO.setPassword("juanito123*");     	
-    	TipoIdentificacionDTO tipoIdentificacionDTO = new TipoIdentificacionDTO();
-    	tipoIdentificacionDTO.setId(1L);
-    	registrolDTO.setTipoIdentificacion(tipoIdentificacionDTO);
-    	HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
-		headers.set("Authorization", "Bearer " + this.token);
-		HttpEntity<RegistroDTO> entity = new HttpEntity<RegistroDTO>(registrolDTO, headers);
-		ResponseEntity<String> response = restTemplate.exchange(getRootUrl() + "/registro/modificarUsuario/" + id, HttpMethod.PUT,
-				entity, String.class);	
-		assertEquals(200, response.getStatusCode().value());
-    }
-
-    @Test
-    public void eliminarUsuarioTest() {
-         int id = 1;
-	     HttpHeaders headers = new HttpHeaders();
-	 	 headers.setContentType(MediaType.APPLICATION_JSON);
-	 	 System.err.println("El token testDeleteUsuario es: " + this.token);
-	 	 headers.set("Authorization", "Bearer " + this.token);
-	 	 HttpEntity<String> entity = new HttpEntity<String>(null, headers);
-		 ResponseEntity<String> postResponse = restTemplate.exchange(getRootUrl() + "/registro/eliminarUsuario/" + id, HttpMethod.DELETE,
-				entity, String.class);
-		 assertEquals(200, postResponse.getStatusCode().value());
-    }
-    
-    public void adicionarTipoIdTest()
+    public void adicionarTipoIdInicial()
     {
     	TipoIdentificacionDTO tipoIdentificacionDTO = new TipoIdentificacionDTO();
     	tipoIdentificacionDTO.setId(1L);
@@ -171,6 +185,7 @@ public class RegistroRestControllerTest {
     	
     }
     
+
 
 
 }

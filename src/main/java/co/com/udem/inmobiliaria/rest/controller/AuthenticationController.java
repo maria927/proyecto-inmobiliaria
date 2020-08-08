@@ -37,7 +37,7 @@ public class AuthenticationController {
         try {
             String username = data.getUsername();
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, data.getPassword()));
-            String token = jwtTokenProvider.createToken(username, this.users.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username " + username + "not found")).getRoles());
+            String token = jwtTokenProvider.createToken(username, this.users.findByNumeroIdentificacion(username).orElseThrow(() -> new UsernameNotFoundException("Username " + username + "not found")).getRoles());
             JSONObject respuesta = new JSONObject();
             respuesta.put("username", username);
             respuesta.put("token", token);

@@ -11,9 +11,12 @@ import co.com.udem.inmobiliaria.entities.Registro;
 public interface RegistroRepository extends CrudRepository<Registro, Long> {
 
 	@Query("SELECT u FROM Registro u WHERE u.numeroIdentificacion = ?1  and tipo_iden=?2")
-	Registro buscarDocumentoTipo(Long numeroIdentificacion, Long tipoIdentificacion);
+	Registro buscarDocumentoTipo(String numeroIdentificacion, Long tipoIdentificacion);
 	
-	Optional<Registro> findByUsername(String username);
+	//Optional<Registro> findByUsername(String username);
+	
+	//@Query("SELECT u FROM Registro u WHERE u.numeroIdentificacion = ?1")
+	Optional<Registro> findByNumeroIdentificacion(String numeroIdentificacion);
 
 	
 }

@@ -5,22 +5,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class RegistroDTO {
 	
 	private Long id;	
-	private Long numeroIdentificacion;
+	private String numeroIdentificacion;
 	private String nombres;
 	private String apellidos;
 	private String direccion;
 	private Long telefono;
 	private String email;
 	private String password;
-	private String username;
 	@Autowired
 	private TipoIdentificacionDTO tipoIdentificacion;
 
 	
-	public Long getNumeroIdentificacion() {
+	public String getNumeroIdentificacion() {
 		return numeroIdentificacion;
 	}
-	public void setNumeroIdentificacion(Long numeroIdentificacion) {
+	public void setNumeroIdentificacion(String numeroIdentificacion) {
 		this.numeroIdentificacion = numeroIdentificacion;
 	}
 	public String getNombres() {
@@ -76,14 +75,8 @@ public class RegistroDTO {
 		this.tipoIdentificacion = tipoIdentificacion;
 	}
 
-	public String getUsername() {
-		return username;
-	}
-	public void setUsername(String username) {
-		this.username = username;
-	}
-	public RegistroDTO(Long id, Long numeroIdentificacion, String nombres, String apellidos, String direccion,
-			Long telefono, String email, String password, String username,
+	public RegistroDTO(Long id, String numeroIdentificacion, String nombres, String apellidos, String direccion,
+			Long telefono, String email, String password,
 			TipoIdentificacionDTO tipoIdentificacion) {
 		super();
 		this.id = id;
@@ -94,9 +87,10 @@ public class RegistroDTO {
 		this.telefono = telefono;
 		this.email = email;
 		this.password = password;
-		this.username = username;
 		this.tipoIdentificacion = tipoIdentificacion;
 	}
+	
+	
 	
 	
 	
