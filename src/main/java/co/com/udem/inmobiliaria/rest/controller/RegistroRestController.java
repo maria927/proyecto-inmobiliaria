@@ -49,7 +49,7 @@ public class RegistroRestController {
 	PasswordEncoder passwordEncoder;
 	
 	@PostMapping("/registro/registrarUsuario")
-	public Map<String, String> adicionarUsuario(@RequestBody RegistroDTO registroDTO) {
+	public  ResponseEntity<Object> adicionarUsuario(@RequestBody RegistroDTO registroDTO) {
 		Map<String, String> response = new HashMap<>();
 		
 		try {
@@ -70,50 +70,44 @@ public class RegistroRestController {
 						.roles(Arrays.asList("ROLE_USER"))
 						.build());
 
-				response.put(Constantes.CODIGO_HTTP, "200");
 	            response.put(Constantes.MENSAJE_EXITO, "Usuario registrado exitosamente");
-	            return response;
+	            return new ResponseEntity<>(response, HttpStatus.OK);
 			} else 
 			{
-				response.put(Constantes.CODIGO_HTTP, "500");
 		        response.put(Constantes.MENSAJE_ERROR, "Ya existe un registro con la identificación "+registroDTO.getNumeroIdentificacion()+" y tipo de documento "+registroDTO.getTipoIdentificacion().getId());
-		        return response;
+		        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 			}
 			
 		} catch (ParseException e) {
-			 response.put(Constantes.CODIGO_HTTP, "500");
 	         response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al insertar");
-	         return response;
+	         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
 	
 	@DeleteMapping("/registro/eliminarUsuario/{id}")
-	public Map<String, String> eliminarUsuario(@PathVariable Long id) {
+	public ResponseEntity<Object> eliminarUsuario(@PathVariable Long id) {
 		Map<String, String> response = new HashMap<>();
 		try {
 			if (registroRepository.findById(id).isPresent()) {
 				registroRepository.deleteById(id);
-				response.put(Constantes.CODIGO_HTTP, "200");
 				response.put(Constantes.MENSAJE_EXITO, "Usuario eliminado exitosamente");
-				return response;
+				return new ResponseEntity<>(response, HttpStatus.OK);
 			}
 			else
 			{
-				response.put(Constantes.CODIGO_HTTP, "404");
 			    response.put(Constantes.MENSAJE_ERROR, "El usuario a modificar no existe en la base de datos");
-			    return response;	
+			    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);	
 			}
 			
-		} catch (Exception e) {	
-			 response.put(Constantes.CODIGO_HTTP, "500");
+		} catch (Exception e) {
 	         response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al eliminar el usuario");
-	         return response;
+	         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	
 	}
 	
 	@PutMapping("/registro/modificarUsuario/{id}")
-    public Map<String, String> modificarUsuario(@RequestBody RegistroDTO nuevoUsuarioDTO, @PathVariable Long id) {
+    public ResponseEntity<Object> modificarUsuario(@RequestBody RegistroDTO nuevoUsuarioDTO, @PathVariable Long id) {
 		Map<String, String> response = new HashMap<>();
 		try {
 			if(registroRepository.findById(id).isPresent()) {
@@ -128,23 +122,20 @@ public class RegistroRestController {
 			    user.setEmail(nuevoUsuario.getEmail());
 			    user.setPassword(this.passwordEncoder.encode(nuevoUsuario.getPassword()));
 			    registroRepository.save(user);
-				response.put(Constantes.CODIGO_HTTP, "200");
 			    response.put(Constantes.MENSAJE_EXITO, "Usuario modificado exitosamente");
-			    return response;
+			    return new ResponseEntity<>(response, HttpStatus.OK);
 			}else {
-				response.put(Constantes.CODIGO_HTTP, "404");
 			    response.put(Constantes.MENSAJE_ERROR, "El usuario a modificar no existe en la base de datos");
-			    return response;
+			    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 			}
 		} catch (Exception e) {
-			 response.put(Constantes.CODIGO_HTTP, "500");
 	         response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al modificar el usuario");
-	         return response;
+	         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
 	
 	@GetMapping("/registro/listarUsuarios")
-	public Map<String, Object> listarUsuarios() {
+	public ResponseEntity<Object> listarUsuarios() {
 		Map<String, Object> response = new HashMap<>();
 		Iterable<Registro> iRegistro = registroRepository.findAll();
 		List<Registro> listaRegistro = new ArrayList<Registro>();
@@ -160,20 +151,19 @@ public class RegistroRestController {
 				RegistroDTO registroDTO = convertRegistro.convertToDTO(listaRegistro.get(i));
 				registroDTO.setTipoIdentificacion(tipoIdentificacion);
 				listaRegistroDTO.add(registroDTO);
-				response.put(Constantes.CODIGO_HTTP, "200");
 				response.put(Constantes.RESULTADO, listaRegistroDTO);
+				
 			} catch (ParseException e) {
-				response.put(Constantes.CODIGO_HTTP, "500");
 		        response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al listar los usuarios");
-		        
 			}
 		}
+		return new ResponseEntity<>(response, HttpStatus.OK);
 
-		return response;
+
 	}
 	
 	@GetMapping("/registro/listarUsuario/{id}")
-	public Map<String, Object> buscarUsuario(@PathVariable Long id) {
+	public ResponseEntity<Object> buscarUsuario(@PathVariable Long id) {
 		Map<String, Object> response = new HashMap<>();
 		RegistroDTO registroDTO = new RegistroDTO();
 		try {
@@ -183,22 +173,20 @@ public class RegistroRestController {
 				TipoIdentificacionDTO tipoIdentificacion = convertTipo.convertToDTO(iRegistro.getTipoIdentificacion());
 				registroDTO = convertRegistro.convertToDTO(iRegistro);
 				registroDTO.setTipoIdentificacion(tipoIdentificacion);
-				response.put(Constantes.CODIGO_HTTP, "200");
 				response.put(Constantes.RESULTADO, registroDTO);
+				return new ResponseEntity<>(response, HttpStatus.OK);
 				
 			} else {
-				response.put(Constantes.CODIGO_HTTP, "404");
 				response.put(Constantes.MENSAJE_ERROR, "El usuario con id "+id+" no existe");
+				return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 			}
 
 		} catch (ParseException e) {
-			response.put(Constantes.CODIGO_HTTP, "500");
 			response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al buscar el usuario");
-			
+			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return response;
+		
 	}
-	
 	
 
 	    @ExceptionHandler(value = {ConstraintViolationException.class})

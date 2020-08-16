@@ -41,7 +41,7 @@ public class TipoIdRestController {
 	private ConvertTipoIdentificacion convertTipoId;
 	
 	@PostMapping("/tipoidentificacion/registrarTipoId")
-	public Map<String, String> adicionarTipoId(@RequestBody TipoIdentificacionDTO tipoIdDTO) {
+	public ResponseEntity<Object> adicionarTipoId(@RequestBody TipoIdentificacionDTO tipoIdDTO) {
 		Map<String, String> response = new HashMap<>();
 		
 		try {
@@ -50,44 +50,39 @@ public class TipoIdRestController {
 			{
 				TipoIdentificacion tipoid = convertTipoId.convertToEntity(tipoIdDTO);
 				tipoIdoRepository.save(tipoid);
-				response.put(Constantes.CODIGO_HTTP, "200");
 	            response.put(Constantes.MENSAJE_EXITO, "Tipo id registrado exitosamente");
-	            return response;
+	            return new ResponseEntity<>(response, HttpStatus.OK);
 			} else 
 			{
-				response.put(Constantes.CODIGO_HTTP, "500");
 		        response.put(Constantes.MENSAJE_ERROR, "Ya existe el tipo de Id "+tipoIdDTO.getTipoDocumento());
-		        return response;
+		        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 			}
 			
 		} catch (ParseException e) {
-			 response.put(Constantes.CODIGO_HTTP, "500");
 	         response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al registrar el tipo de id");
-	         return response;
+	         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
 	
 	@GetMapping("/tipoidentificacion/obtenerTipoId")
-	public Map<String, Object> listarUsuarios() {
+	public ResponseEntity<Object> listarUsuarios() {
 		Map<String, Object> response = new HashMap<>();
 		List<TipoIdentificacionDTO> tipoId = new ArrayList<>();
 
 			try {
 				Iterable<TipoIdentificacion> listaId = tipoIdoRepository.findAll();
 				tipoId = convertTipoId.convertToDTOIterable(listaId);
-				response.put(Constantes.CODIGO_HTTP, "200");
 				response.put(Constantes.RESULTADO, tipoId);
-				return response;
+				return new ResponseEntity<>(response, HttpStatus.OK);
 			} catch (ParseException e) {
-				response.put(Constantes.CODIGO_HTTP, "500");
 		        response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al listar los tipo de id");
-		        return response;
+		        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 	}
 	
 	
 	@GetMapping("/tipoidentificacion/obtenerTipoId/{id}")
-	public Map<String, Object> buscarUsuario(@PathVariable Long id) {
+	public ResponseEntity<Object> buscarUsuario(@PathVariable Long id) {
 		Map<String, Object> response = new HashMap<>();
 		TipoIdentificacionDTO tipoIdDTO = new TipoIdentificacionDTO();
 
@@ -96,51 +91,45 @@ public class TipoIdRestController {
 			if (tipoIdoRepository.findById(id).isPresent()) {
 				TipoIdentificacion tipoId = tipoIdoRepository.findById(id).get();
 				tipoIdDTO = convertTipoId.convertToDTO(tipoId);
-				response.put(Constantes.CODIGO_HTTP, "200");
 				response.put(Constantes.RESULTADO, tipoIdDTO);
 				
 			} else {
-				response.put(Constantes.CODIGO_HTTP, "404");
 				response.put(Constantes.MENSAJE_ERROR, "El id no existe");
 			}
 
 		} catch (ParseException e) {
-			response.put(Constantes.CODIGO_HTTP, "500");
 			response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al buscar el usuario");
 			
 		}
-		return response;
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	
 	
 	
 	@DeleteMapping("/tipoidentificacion/eliminarTipoId/{id}")
-	public Map<String, String> eliminarUsuario(@PathVariable Long id) {
+	public ResponseEntity<Object> eliminarUsuario(@PathVariable Long id) {
 		Map<String, String> response = new HashMap<>();
 		try {
 			if (tipoIdoRepository.findById(id).isPresent()) {
 				tipoIdoRepository.deleteById(id);
-				response.put(Constantes.CODIGO_HTTP, "200");
 				response.put(Constantes.MENSAJE_EXITO, "Tipo id eliminado exitosamente");
-				return response;
+				return new ResponseEntity<>(response, HttpStatus.OK);
 			}
 			else
 			{
-				response.put(Constantes.CODIGO_HTTP, "404");
 			    response.put(Constantes.MENSAJE_ERROR, "El tipo de id no existe en la base de datos");
-			    return response;	
+			    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);	
 			}
 			
 		} catch (Exception e) {	
-			 response.put(Constantes.CODIGO_HTTP, "500");
 	         response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al eliminar el tipo de id");
-	         return response;
+	         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	
 	}
 	
 	@PutMapping("/tipoidentificacion/modificarTipoId/{id}")
-    public Map<String, String> modificarUsuario(@RequestBody TipoIdentificacionDTO nuevoTipoIdDTO, @PathVariable Long id) {
+    public ResponseEntity<Object> modificarUsuario(@RequestBody TipoIdentificacionDTO nuevoTipoIdDTO, @PathVariable Long id) {
 		Map<String, String> response = new HashMap<>();
 		try {
 			if(tipoIdoRepository.findById(id).isPresent()) {
@@ -148,18 +137,15 @@ public class TipoIdRestController {
 				TipoIdentificacion tipoid = tipoIdoRepository.findById(id).get();
 				tipoid.setTipoDocumento(nuevoTipoId.getTipoDocumento());
 			    tipoIdoRepository.save(tipoid);
-				response.put(Constantes.CODIGO_HTTP, "200");
 			    response.put(Constantes.MENSAJE_EXITO, "Tipo id modificado exitosamente");
-			    return response;
+			    return new ResponseEntity<>(response, HttpStatus.OK);
 			}else {
-				response.put(Constantes.CODIGO_HTTP, "404");
 			    response.put(Constantes.MENSAJE_ERROR, "El tipo id a modificar no existe en la base de datos");
-			    return response;
+			    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 			}
 		} catch (Exception e) {
-			 response.put(Constantes.CODIGO_HTTP, "500");
 	         response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al modificar el tipo id");
-	         return response;
+	         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
 	

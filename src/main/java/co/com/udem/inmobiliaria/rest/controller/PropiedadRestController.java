@@ -43,44 +43,40 @@ public class PropiedadRestController {
 	private FiltroPropiedades filtroPropiedades;
 	
 	@PostMapping("/propiedad/registrarPropiedad")
-	public Map<String, String> adicionarPropiedad(@RequestBody PropiedadDTO propiedadDTO) {
+	public ResponseEntity<Object> adicionarPropiedad(@RequestBody PropiedadDTO propiedadDTO) {
 		Map<String, String> response = new HashMap<>();
 		
 		try {
 				Propiedad propiedad = convertPropiedad.convertToEntity(propiedadDTO);
 				propiedadRepository.save(propiedad);
-				response.put(Constantes.CODIGO_HTTP, "200");
 	            response.put(Constantes.MENSAJE_EXITO, "Propiedad registrada exitosamente");
-	            return response;
+	            return new ResponseEntity<>(response, HttpStatus.OK);
 
 		} catch (ParseException e) {
-			 response.put(Constantes.CODIGO_HTTP, "500");
 	         response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al registrar la propiedad");
-	         return response;
+	         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
 	
 	@GetMapping("/propiedad/listarPropiedades")
-	public Map<String, Object> listarPropiedades() {
+	public ResponseEntity<Object> listarPropiedades() {
 		Map<String, Object> response = new HashMap<>();
 		List<PropiedadDTO> propiedad = new ArrayList<>();
 
 			try {
 				Iterable<Propiedad> listaPropiedad = propiedadRepository.findAll();
 				propiedad = convertPropiedad.convertToDTOList(listaPropiedad);
-				response.put(Constantes.CODIGO_HTTP, "200");
 				response.put(Constantes.RESULTADO, propiedad);
-				return response;
+				return new ResponseEntity<>(response, HttpStatus.OK);
 			} catch (ParseException e) {
-				response.put(Constantes.CODIGO_HTTP, "500");
 		        response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al listar las propiedades");
-		        return response;
+		        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 	}
 	
 	
 	@GetMapping("/propiedad/listarPropiedad/{id}")
-	public Map<String, Object> buscarPropiedad(@PathVariable Long id) {
+	public ResponseEntity<Object> buscarPropiedad(@PathVariable Long id) {
 		Map<String, Object> response = new HashMap<>();
 		PropiedadDTO propiedadDTO = new PropiedadDTO();
 
@@ -89,51 +85,45 @@ public class PropiedadRestController {
 			if (propiedadRepository.findById(id).isPresent()) {
 				Propiedad propiedad = propiedadRepository.findById(id).get();
 				propiedadDTO = convertPropiedad.convertToDTO(propiedad);
-				response.put(Constantes.CODIGO_HTTP, "200");
 				response.put(Constantes.RESULTADO, propiedadDTO);
 				
 			} else {
-				response.put(Constantes.CODIGO_HTTP, "404");
 				response.put(Constantes.MENSAJE_ERROR, "La propiedad con id "+id+" no existe");
 			}
 
 		} catch (ParseException e) {
-			response.put(Constantes.CODIGO_HTTP, "500");
 			response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al buscar la propiedada");
 			
 		}
-		return response;
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	
 	
 	
 	@DeleteMapping("/propiedad/eliminarPropiedad/{id}")
-	public Map<String, String> eliminarPropiedad(@PathVariable Long id) {
+	public ResponseEntity<Object> eliminarPropiedad(@PathVariable Long id) {
 		Map<String, String> response = new HashMap<>();
 		try {
 			if (propiedadRepository.findById(id).isPresent()) {
 				propiedadRepository.deleteById(id);
-				response.put(Constantes.CODIGO_HTTP, "200");
 				response.put(Constantes.MENSAJE_EXITO, "Propiedad eliminada exitosamente");
-				return response;
+				return new ResponseEntity<>(response, HttpStatus.OK);
 			}
 			else
 			{
-				response.put(Constantes.CODIGO_HTTP, "404");
 			    response.put(Constantes.MENSAJE_ERROR, "La propiedad a modificar no existe en la base de datos");
-			    return response;	
+			    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 			}
 			
 		} catch (Exception e) {	
-			 response.put(Constantes.CODIGO_HTTP, "500");
 	         response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al eliminar la propiedad");
-	         return response;
+	         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	
 	}
 	
 	@PutMapping("/propiedad/modificarPropiedad/{id}")
-    public Map<String, String> modificarUsuario(@RequestBody PropiedadDTO nuevaPropiedadDTO, @PathVariable Long id) {
+    public ResponseEntity<Object> modificarUsuario(@RequestBody PropiedadDTO nuevaPropiedadDTO, @PathVariable Long id) {
 		Map<String, String> response = new HashMap<>();
 		try {
 			if(propiedadRepository.findById(id).isPresent()) {
@@ -146,31 +136,28 @@ public class PropiedadRestController {
 			    propiedad.setValor(nuevaPropiedad.getValor());
 			    propiedad.setRegistro(nuevaPropiedad.getRegistro());
 			    propiedadRepository.save(propiedad);
-				response.put(Constantes.CODIGO_HTTP, "200");
 			    response.put(Constantes.MENSAJE_EXITO, "Propiedad modificada exitosamente");
-			    return response;
+			    return new ResponseEntity<>(response, HttpStatus.OK);
 			}else {
-				response.put(Constantes.CODIGO_HTTP, "404");
 			    response.put(Constantes.MENSAJE_ERROR, "La propiedad a modificar no existe en la base de datos");
-			    return response;
+			    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 			}
 		} catch (Exception e) {
-			 response.put(Constantes.CODIGO_HTTP, "500");
 	         response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al modificar la propiedad");
-	         return response;
+	         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }
 	
 	
 		@PostMapping("/propiedad/filtrarPropiedad")
-		public List<Propiedad> filtarPropiedad(@RequestBody FiltroDTO filtroDTO) throws ParseException {
+		public ResponseEntity<Object> filtarPropiedad(@RequestBody FiltroDTO filtroDTO) throws ParseException {
 			Map<String, Object> response = new HashMap<>();
 			
 			List<Propiedad> filtro = new ArrayList<>();
 			//filtro = filtroPropiedades.filtrarPropiedades(filtroDTO);
 			filtro = propiedadRepository.findByArea(filtroDTO.getArea());
 		
-			return filtro;
+			return new ResponseEntity<>(filtro, HttpStatus.OK);
 		}
 	
 	
