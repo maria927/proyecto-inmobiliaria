@@ -10,6 +10,11 @@ public class PropiedadDTO {
 	private int numerobaños;
 	private String tipopropiedad;
 	private double valor;
+	@Autowired
+	private RegistroDTO registro;
+
+	
+	
 	public Long getId() {
 		return id;
 	}
@@ -46,11 +51,18 @@ public class PropiedadDTO {
 	public void setValor(double valor) {
 		this.valor = valor;
 	}
+	
+	public RegistroDTO getRegistro() {
+		return registro;
+	}
+	public void setRegistro(RegistroDTO registro) {
+		this.registro = registro;
+	}
 	public PropiedadDTO() {
 		super();
 	}
 	public PropiedadDTO(Long id, double area, int numerohabitaciones, int numerobaños, String tipopropiedad,
-			double valor) {
+			double valor, RegistroDTO registro) {
 		super();
 		this.id = id;
 		this.area = area;
@@ -58,8 +70,9 @@ public class PropiedadDTO {
 		this.numerobaños = numerobaños;
 		this.tipopropiedad = tipopropiedad;
 		this.valor = valor;
+		this.registro = registro;
 	}
-	
+
 	
 	
 	

@@ -22,11 +22,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
+import co.com.udem.inmobiliaria.dto.FiltroDTO;
 import co.com.udem.inmobiliaria.dto.PropiedadDTO;
 import co.com.udem.inmobiliaria.entities.Propiedad;
 import co.com.udem.inmobiliaria.repositories.PropiedadRepository;
 import co.com.udem.inmobiliaria.utils.Constantes;
 import co.com.udem.inmobiliaria.utils.ConvertPropiedad;
+import co.com.udem.inmobiliaria.utils.FiltroPropiedades;
 
 @RestController
 public class PropiedadRestController {
@@ -37,26 +39,20 @@ public class PropiedadRestController {
 	@Autowired
 	private ConvertPropiedad convertPropiedad;
 	
+	@Autowired
+	private FiltroPropiedades filtroPropiedades;
+	
 	@PostMapping("/propiedad/registrarPropiedad")
 	public Map<String, String> adicionarPropiedad(@RequestBody PropiedadDTO propiedadDTO) {
 		Map<String, String> response = new HashMap<>();
 		
 		try {
-			
-//			if(registroRepository.buscarDocumentoTipo(registroDTO.getNumeroIdentificacion(), registroDTO.getTipoIdentificacionDTO().getId()) == null) 
-//			{
 				Propiedad propiedad = convertPropiedad.convertToEntity(propiedadDTO);
 				propiedadRepository.save(propiedad);
 				response.put(Constantes.CODIGO_HTTP, "200");
 	            response.put(Constantes.MENSAJE_EXITO, "Propiedad registrada exitosamente");
 	            return response;
-//			} else 
-//			{
-//				response.put(Constantes.CODIGO_HTTP, "500");
-//		        response.put(Constantes.MENSAJE_ERROR, "Ya existe un registro con la identificación "+registroDTO.getNumeroIdentificacion()+" y tipo de documento "+registroDTO.getTipoIdentificacionDTO().getId());
-//		        return response;
-//			}
-			
+
 		} catch (ParseException e) {
 			 response.put(Constantes.CODIGO_HTTP, "500");
 	         response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al registrar la propiedad");
@@ -148,6 +144,7 @@ public class PropiedadRestController {
 			    propiedad.setNumerohabitaciones(nuevaPropiedad.getNumerohabitaciones());
 			    propiedad.setTipopropiedad(nuevaPropiedad.getTipopropiedad());
 			    propiedad.setValor(nuevaPropiedad.getValor());
+			    propiedad.setRegistro(nuevaPropiedad.getRegistro());
 			    propiedadRepository.save(propiedad);
 				response.put(Constantes.CODIGO_HTTP, "200");
 			    response.put(Constantes.MENSAJE_EXITO, "Propiedad modificada exitosamente");
@@ -164,22 +161,18 @@ public class PropiedadRestController {
     }
 }
 	
-	@GetMapping("/propiedad/area")
-	public Map<String, Object> filtroPorArea(@RequestBody PropiedadDTO propiedadDTO) {
-		Map<String, Object> response = new HashMap<>();
-
-			try {
-				Propiedad propiedad = convertPropiedad.convertToEntity(propiedadDTO);
-				List<Propiedad> listaPropiedad = propiedadRepository.findByArea(propiedadDTO.getArea());
-				response.put(Constantes.CODIGO_HTTP, "200");
-				response.put(Constantes.RESULTADO, listaPropiedad);
-				return response;
-			} catch (ParseException e) {
-				response.put(Constantes.CODIGO_HTTP, "500");
-		        response.put(Constantes.MENSAJE_ERROR, "Ocurrió un problema al listar las propiedades");
-		        return response;
-			}
-	}
+	
+		@PostMapping("/propiedad/filtrarPropiedad")
+		public List<Propiedad> filtarPropiedad(@RequestBody FiltroDTO filtroDTO) throws ParseException {
+			Map<String, Object> response = new HashMap<>();
+			
+			List<Propiedad> filtro = new ArrayList<>();
+			//filtro = filtroPropiedades.filtrarPropiedades(filtroDTO);
+			filtro = propiedadRepository.findByArea(filtroDTO.getArea());
+		
+			return filtro;
+		}
+	
 	
 	
 	    @ExceptionHandler(value = {ConstraintViolationException.class})
@@ -187,7 +180,7 @@ public class PropiedadRestController {
 	            WebRequest request ) {
 		    Map<String, String> response = new HashMap<>();
 		   	response.put(Constantes.CODIGO_HTTP, "500");
-			response.put(Constantes.MENSAJE_ERROR, "Fallo en constraint: El tipo de documento ingresado es incorrecto o no existe");
+			response.put(Constantes.MENSAJE_ERROR, "Fallo en constraint: El usuario ingresado es incorrecto o no existe");
 	        return response;       
 	    }
 

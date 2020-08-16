@@ -4,8 +4,11 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,9 +17,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,10 +52,15 @@ public class Registro implements UserDetails{
 	private String email;
 	//private String username;
 	private String password;
-		
+	
+	@JsonBackReference
 	@ManyToOne
-	@JoinColumn(name = "tipo_iden", referencedColumnName = "id")
+	@JoinColumn(name = "tipo_iden")
 	private TipoIdentificacion tipoIdentificacion;
+	
+	@JsonManagedReference
+	@OneToMany(mappedBy = "registro", targetEntity= Propiedad.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Set<Propiedad> registrarPropiedad = new HashSet<Propiedad>();
 	
 	@ElementCollection(fetch = FetchType.EAGER)
 	@Builder.Default

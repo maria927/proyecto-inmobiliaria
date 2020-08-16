@@ -1,12 +1,22 @@
 package co.com.udem.inmobiliaria.entities;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 public class TipoIdentificacion {
@@ -16,8 +26,9 @@ public class TipoIdentificacion {
 	private Long id;
 	private String tipoDocumento;
 	
-	@OneToMany(mappedBy = "tipoIdentificacion")
-	private Collection<Registro> registrarUsuario;
+	@JsonManagedReference
+	@OneToMany(mappedBy = "tipoIdentificacion", targetEntity = Registro.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Set<Registro> registrarUsuario = new HashSet<Registro>();
 
 	public TipoIdentificacion() {
 		super();

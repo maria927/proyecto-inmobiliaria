@@ -1,11 +1,17 @@
 package co.com.udem.inmobiliaria.entities;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 public class Propiedad {
@@ -18,6 +24,12 @@ public class Propiedad {
 	private int numerobaños;
 	private String tipopropiedad;
 	private double valor;
+	
+	@JsonBackReference
+	@ManyToOne
+	@JoinColumn(name = "regist")
+	private Registro registro;
+	
 	public Long getId() {
 		return id;
 	}
@@ -54,8 +66,17 @@ public class Propiedad {
 	public void setValor(double valor) {
 		this.valor = valor;
 	}
-	public Propiedad(Long id, double area, int numerohabitaciones, int numerobaños, String tipopropiedad,
-			double valor) {
+	
+	public Registro getRegistro() {
+		return registro;
+	}
+	public void setRegistro(Registro registro) {
+		this.registro = registro;
+	}
+
+	
+	public Propiedad(Long id, double area, int numerohabitaciones, int numerobaños, String tipopropiedad, double valor,
+			Registro registro) {
 		super();
 		this.id = id;
 		this.area = area;
@@ -63,6 +84,7 @@ public class Propiedad {
 		this.numerobaños = numerobaños;
 		this.tipopropiedad = tipopropiedad;
 		this.valor = valor;
+		this.registro = registro;
 	}
 	public Propiedad() {
 		super();

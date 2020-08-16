@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import co.com.udem.inmobiliaria.utils.ConvertPropiedad;
 import co.com.udem.inmobiliaria.utils.ConvertRegistro;
 import co.com.udem.inmobiliaria.utils.ConvertTipoIdentificacion;
+import co.com.udem.inmobiliaria.utils.FiltroPropiedades;
 
 @SpringBootApplication
 public class ProyectoInmobiliariaApplication {
@@ -42,6 +43,11 @@ public class ProyectoInmobiliariaApplication {
     PasswordEncoder getEncoder() {
         return new BCryptPasswordEncoder();
     }
+	
+	@Bean
+	public FiltroPropiedades filtroPropiedades() {		
+		return new FiltroPropiedades();
+	}
 
 
 	
