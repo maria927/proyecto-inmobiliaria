@@ -154,8 +154,8 @@ public class PropiedadRestController {
 			Map<String, Object> response = new HashMap<>();
 			
 			List<Propiedad> filtro = new ArrayList<>();
-			//filtro = filtroPropiedades.filtrarPropiedades(filtroDTO);
-			filtro = propiedadRepository.findByArea(filtroDTO.getArea());
+			filtro = filtroPropiedades.filtrarPropiedades(filtroDTO);
+			//filtro = propiedadRepository.findByArea(filtroDTO.getArea());
 		
 			return new ResponseEntity<>(filtro, HttpStatus.OK);
 		}

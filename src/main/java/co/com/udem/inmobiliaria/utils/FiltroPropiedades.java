@@ -37,8 +37,8 @@ public List<Propiedad> filtrarPropiedades(FiltroDTO objectFilter) throws ParseEx
 		List<Predicate> predicates = new ArrayList<>();
 		double area = objectFilter.getArea();
 		int nrohabitaciones = objectFilter.getNumeroHabitaciones();
-		//double precioInicial = objectFilter.getPrecioInicial();
-		//double precioFinal = objectFilter.getPrecioFinal();
+		double precioInicial = objectFilter.getPrecioInicial();
+		double precioFinal = objectFilter.getPrecioFinal();
 		
 	
 		if(area != 0)
@@ -51,22 +51,22 @@ public List<Propiedad> filtrarPropiedades(FiltroDTO objectFilter) throws ParseEx
 			predicates.add(cb.equal(root.get("numerohabitaciones"), nrohabitaciones));
 		}
 		
-//	
-//		if(fechaInicialStr != null && fechaFinalStr != null)
-//		{
-//			predicates.add(cb.greaterThanOrEqualTo(root.<String>get("fechaAcuerdo"), fechaInicialStr+" 00:00:00"));
-//			predicates.add(cb.lessThanOrEqualTo(root.<String>get("fechaAcuerdo"), fechaFinalStr+" 23:59:59"));
-//		}
-//		
-//		if(fechaInicialStr == null && fechaFinalStr != null)
-//		{
-//			predicates.add(cb.lessThanOrEqualTo(root.<String>get("fechaAcuerdo"), fechaFinalStr+" 23:59:59"));
-//		}
-//		
-//		if(fechaInicialStr != null && fechaFinalStr == null)
-//		{
-//			predicates.add(cb.greaterThanOrEqualTo(root.<String>get("fechaAcuerdo"), fechaInicialStr+" 00:00:00"));
-//		}
+	
+		if(precioInicial != 0.0 && precioFinal != 0.0)
+		{
+			predicates.add(cb.greaterThanOrEqualTo(root.<Double>get("valor"), precioInicial));
+			predicates.add(cb.lessThanOrEqualTo(root.<Double>get("valor"), precioFinal));
+		}
+		
+		if(precioInicial == 0.0  && precioFinal != 0.0 )
+		{
+			predicates.add(cb.lessThanOrEqualTo(root.<Double>get("valor"), precioFinal));
+		}
+		
+		if(precioInicial != 0.0  && precioFinal == 0.0 )
+		{
+			predicates.add(cb.greaterThanOrEqualTo(root.<Double>get("valor"), precioInicial));
+		}
 		
 		if (predicates.isEmpty()) {
 			cr.select(root);
