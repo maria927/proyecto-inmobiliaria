@@ -17,7 +17,12 @@ public interface PropiedadRepository extends CrudRepository<Propiedad, Long> {
 	List<Propiedad> findByArea(double area);
 	List<Propiedad> findByValor(double valor);
 	
+	@Query("SELECT u FROM Propiedad u WHERE u.valor BETWEEN :valorInicial AND :valorFinal")
+	List<Propiedad> findByRangoValor(double valorInicial, double valorFinal);
 	
-//	@Query("SELECT u.id, u.area, u.numerohabitaciones, u.tipopropiedad, u.valor FROM Propiedad u WHERE u.area  = ?1 ")
-//	List<Object> findByArea(double area);
+	@Query("SELECT u FROM Propiedad u WHERE u.valor >= :valorInicial")
+	List<Propiedad> findByValorInicial(double valorInicial);
+	
+	@Query("SELECT u FROM Propiedad u WHERE u.valor <= :valorFinal")
+	List<Propiedad> findByValorFinal(double valorFinal);
 }

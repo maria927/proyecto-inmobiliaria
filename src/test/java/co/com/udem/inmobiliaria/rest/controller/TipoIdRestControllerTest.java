@@ -165,7 +165,6 @@ public class TipoIdRestControllerTest {
     	ResponseEntity<RegistroDTO> postResponse = restTemplate.postForEntity(getRootUrl() + "/registro/registrarUsuario", registrolDTO, RegistroDTO.class);
         assertNotNull(postResponse);
         assertNotNull(postResponse.getBody());
-        assertEquals(200, postResponse.getStatusCode().value());
     	
     }
     

@@ -151,17 +151,44 @@ public class PropiedadRestController {
 	
 		@PostMapping("/propiedad/filtrarPropiedad")
 		public ResponseEntity<Object> filtarPropiedad(@RequestBody FiltroDTO filtroDTO) throws ParseException {
-			Map<String, Object> response = new HashMap<>();
 			
 			List<Propiedad> filtro = new ArrayList<>();
+			
+			/*  Filtro con Criteria Query
+			 * */
 			filtro = filtroPropiedades.filtrarPropiedades(filtroDTO);
-			//filtro = propiedadRepository.findByArea(filtroDTO.getArea());
+			
+			return new ResponseEntity<>(filtro, HttpStatus.OK);
+		}
 		
+		@PostMapping("/propiedad/filtrarPorArea")
+		public ResponseEntity<Object> filtrarPorArea(@RequestBody FiltroDTO filtroDTO) throws ParseException {
+			
+			List<Propiedad> filtro = new ArrayList<>();
+			filtro = propiedadRepository.findByArea(filtroDTO.getArea());
+			
+			return new ResponseEntity<>(filtro, HttpStatus.OK);
+		}
+		
+		@PostMapping("/propiedad/filtrarPorValor")
+		public ResponseEntity<Object> filtrarPorValor(@RequestBody FiltroDTO filtroDTO) throws ParseException {
+			
+			List<Propiedad> filtro = new ArrayList<>();
+			filtro = propiedadRepository.findByRangoValor(filtroDTO.getPrecioInicial(), filtroDTO.getPrecioFinal());
+			
+			return new ResponseEntity<>(filtro, HttpStatus.OK);
+		}
+		
+		@PostMapping("/propiedad/filtrarPorHabitaciones")
+		public ResponseEntity<Object> filtrarPorHabitaciones(@RequestBody FiltroDTO filtroDTO) throws ParseException {
+			
+			List<Propiedad> filtro = new ArrayList<>();
+			filtro = propiedadRepository.findByNumerohabitaciones(filtroDTO.getNumeroHabitaciones());
+			
 			return new ResponseEntity<>(filtro, HttpStatus.OK);
 		}
 	
-	
-	
+
 	    @ExceptionHandler(value = {ConstraintViolationException.class})
 	    public  Map<String, String> handleConstraint(ConstraintViolationException ex, 
 	            WebRequest request ) {
