@@ -149,6 +149,8 @@ public class PropiedadRestController {
 }
 	
 	
+	 /*  Filtro con criteria query api: Genera automáticamente la consulta de acuerdo
+     * a los valores enviados*/
 		@PostMapping("/propiedad/filtrarPropiedad")
 		public ResponseEntity<Object> filtarPropiedad(@RequestBody FiltroDTO filtroDTO) throws ParseException {
 			
