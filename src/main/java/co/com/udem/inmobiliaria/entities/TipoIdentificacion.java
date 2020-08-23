@@ -27,7 +27,7 @@ public class TipoIdentificacion {
 	private String tipoDocumento;
 	
 	@JsonManagedReference
-	@OneToMany(mappedBy = "tipoIdentificacion", targetEntity = Registro.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "tipoIdentificacion")
 	private Set<Registro> registrarUsuario = new HashSet<Registro>();
 
 	public TipoIdentificacion() {

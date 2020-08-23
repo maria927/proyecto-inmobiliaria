@@ -59,7 +59,7 @@ public class Registro implements UserDetails{
 	private TipoIdentificacion tipoIdentificacion;
 	
 	@JsonManagedReference
-	@OneToMany(mappedBy = "registro", targetEntity= Propiedad.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "registro", targetEntity= Propiedad.class, fetch = FetchType.EAGER)
 	private Set<Propiedad> registrarPropiedad = new HashSet<Propiedad>();
 	
 	@ElementCollection(fetch = FetchType.EAGER)
