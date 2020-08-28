@@ -113,6 +113,7 @@ public class RegistroRestControllerTest {
     	HttpEntity<String> entity = new HttpEntity<String>(null, headers);
 		ResponseEntity<String> postResponse = restTemplate.exchange(getRootUrl() + "/registro/listarUsuario/1", HttpMethod.GET,
 				entity, String.class);
+		assertNotNull(postResponse.getBody());
 		System.err.println("buscarUsuarioTest: " + postResponse);
     }
     
@@ -136,6 +137,7 @@ public class RegistroRestControllerTest {
 		HttpEntity<RegistroDTO> entity = new HttpEntity<RegistroDTO>(registrolDTO, headers);
 		ResponseEntity<String> response = restTemplate.exchange(getRootUrl() + "/registro/modificarUsuario/" + id, HttpMethod.PUT,
 				entity, String.class);	
+		assertNotNull(response.getBody());
 		System.err.println("testmodificarUsuarios: " + response);
     }
 
@@ -148,6 +150,7 @@ public class RegistroRestControllerTest {
 	 	 HttpEntity<String> entity = new HttpEntity<String>(null, headers);
 		 ResponseEntity<String> postResponse = restTemplate.exchange(getRootUrl() + "/registro/eliminarUsuario/" + id, HttpMethod.DELETE,
 				entity, String.class);
+		 assertNotNull(postResponse.getBody());
 		 System.err.println("testEliminarUsuarios: " + postResponse);
     }
     
